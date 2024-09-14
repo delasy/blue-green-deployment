@@ -22,9 +22,11 @@ fi
 extra_params=()
 
 if [ "$INPUT_PRIVATE_KEY" != "" ]; then
-  printf '%s' "$INPUT_PRIVATE_KEY" > "$HOME/.ssh/$INPUT_NAME.pem"
-  chmod 600 "$HOME/.ssh/$INPUT_NAME.pem"
-  extra_params=("-i" "$HOME/.ssh/$INPUT_NAME.pem")
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+  printf '%s' "$INPUT_PRIVATE_KEY" > "$HOME/.ssh/$INPUT_NAME"
+  chmod 600 "$HOME/.ssh/$INPUT_NAME"
+  extra_params=("-i" "$HOME/.ssh/$INPUT_NAME")
 fi
 
 scp -P "$INPUT_PORT" "${extra_params[@]}" "$INPUT_NAME.tgz" "$remote:$INPUT_NAME.tgz"
