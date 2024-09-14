@@ -18,7 +18,7 @@ else
   remote="$INPUT_USERNAME:$INPUT_PASSWORD@$INPUT_HOST"
 fi
 
-ssh_args=('-o' 'StrictHostKeyChecking=no')
+ssh_args=()
 
 if [ "$INPUT_PRIVATE_KEY" != '' ]; then
   mkdir -p "$HOME/.ssh"
@@ -26,6 +26,8 @@ if [ "$INPUT_PRIVATE_KEY" != '' ]; then
   printf '%s' "$INPUT_PRIVATE_KEY" > "$HOME/.ssh/$INPUT_NAME"
   chmod 600 "$HOME/.ssh/$INPUT_NAME"
   ssh_args+=('-i' "$HOME/.ssh/$INPUT_NAME")
+  ssh-keyscan "$INPUT_HOST" >> "$HOME/.ssh/known_hosts"
+  chmod 600 "$HOME/.ssh/known_hosts"
 fi
 
 scp "${ssh_args[@]}" -P "$INPUT_PORT" "$tmp_dir/$INPUT_NAME.tgz" "$remote:$INPUT_NAME.tgz"
