@@ -1,0 +1,53 @@
+name: Blue/Green Deployment
+description: Blue/Green deployment for PM2 running on Ubuntu
+author: Aaron Delasy
+
+inputs:
+  name:
+    description: Name of the project, usually project domain, eg. delasy.com
+    required: true
+  host:
+    description: Remote host address, eg. 1.1.1.1
+    required: true
+  port:
+    description: Remote port number, eg. 22
+    default: 22
+    required: true
+  username:
+    description: Remote username, eg. ubuntu
+    required: true
+  password:
+    description: Remote password
+  private-key:
+    description: Contents of private SSH key
+  source:
+    description: Source directory path, eg. ./build
+    required: true
+  blue-port:
+    description: NGINX blue port, eg. 3000
+    default: 3000
+    required: true
+  green-port:
+    description: NGINX green port, eg. 3001
+    default: 3001
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - run: $GITHUB_ACTION_PATH/script.sh
+      shell: bash
+      env:
+        INPUT_NAME: ${{ inputs.name }}
+        INPUT_HOST: ${{ inputs.host }}
+        INPUT_PORT: ${{ inputs.port }}
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_PASSWORD: ${{ inputs.password }}
+        INPUT_PRIVATE_KEY: ${{ inputs.private-key }}
+        INPUT_SOURCE: ${{ inputs.source }}
+        INPUT_BLUE_PORT: ${{ inputs.blue-port }}
+        INPUT_GREEN_PORT: ${{ inputs.green-port }}
+
+branding:
+  icon: cloud
+  color: black

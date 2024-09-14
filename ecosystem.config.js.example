@@ -1,0 +1,18 @@
+module.exports = {
+  apps: [
+    {
+      name: 'app-$TARGET',
+      script: 'npm',
+      cwd: __dirname,
+      args: 'run start',
+      time: true,
+      env_development: {
+        NODE_ENV: 'development',
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: '$TARGET_PORT',
+      },
+    },
+  ],
+};
