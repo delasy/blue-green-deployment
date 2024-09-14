@@ -11,24 +11,22 @@ REMOTE_CODE="${REMOTE_CODE//\$INPUT_NAME/$INPUT_NAME}"
 tmp_dir="${RUNNER_TEMP:-$TMPDIR}"
 
 tar --exclude=.git -czf "$tmp_dir/$INPUT_NAME.tgz" "$INPUT_SOURCE"
-mv "$tmp_dir/$INPUT_NAME.tgz" .
 
-if [ "$INPUT_PASSWORD" == "" ]; then
+if [ "$INPUT_PASSWORD" == '' ]; then
   remote="$INPUT_USERNAME@$INPUT_HOST"
 else
   remote="$INPUT_USERNAME:$INPUT_PASSWORD@$INPUT_HOST"
 fi
 
-extra_params=()
+ssh_args=('-o' 'StrictHostKeyChecking=no')
 
-if [ "$INPUT_PRIVATE_KEY" != "" ]; then
+if [ "$INPUT_PRIVATE_KEY" != '' ]; then
   mkdir -p "$HOME/.ssh"
   chmod 700 "$HOME/.ssh"
   printf '%s' "$INPUT_PRIVATE_KEY" > "$HOME/.ssh/$INPUT_NAME"
   chmod 600 "$HOME/.ssh/$INPUT_NAME"
-  extra_params=("-i" "$HOME/.ssh/$INPUT_NAME")
+  ssh_args+=('-i' "$HOME/.ssh/$INPUT_NAME")
 fi
 
-scp -P "$INPUT_PORT" "${extra_params[@]}" "$INPUT_NAME.tgz" "$remote:$INPUT_NAME.tgz"
-rm -rf "$tmp_dir/$INPUT_NAME.tgz" .
-ssh -p "$INPUT_PORT" "${extra_params[@]}" "$remote" 'bash -s' <<< "$REMOTE_CODE"
+scp "${ssh_args[@]}" -P "$INPUT_PORT" "$tmp_dir/$INPUT_NAME.tgz" "$remote:$INPUT_NAME.tgz"
+ssh "${ssh_args[@]}" -p "$INPUT_PORT" "$remote" 'bash -s' <<< "$REMOTE_CODE"
