@@ -8,8 +8,10 @@ REMOTE_CODE="${REMOTE_CODE//\$INPUT_BLUE_PORT/$INPUT_BLUE_PORT}"
 REMOTE_CODE="${REMOTE_CODE//\$INPUT_GREEN_PORT/$INPUT_GREEN_PORT}"
 REMOTE_CODE="${REMOTE_CODE//\$INPUT_NAME/$INPUT_NAME}"
 
-tar --exclude=.git -czf "$TMPDIR/$INPUT_NAME.tgz" "$INPUT_SOURCE"
-mv "$TMPDIR/$INPUT_NAME.tgz" .
+tmp_dir="${RUNNER_TEMP:-$TMPDIR}"
+
+tar --exclude=.git -czf "$tmp_dir/$INPUT_NAME.tgz" "$INPUT_SOURCE"
+mv "$tmp_dir/$INPUT_NAME.tgz" .
 
 if [ "$INPUT_PASSWORD" == "" ]; then
   remote="$INPUT_USERNAME@$INPUT_HOST"
@@ -26,4 +28,5 @@ if [ "$INPUT_PRIVATE_KEY" != "" ]; then
 fi
 
 scp -P "$INPUT_PORT" "${extra_params[@]}" "$INPUT_NAME.tgz" "$remote:$INPUT_NAME.tgz"
+rm -rf "$tmp_dir/$INPUT_NAME.tgz" .
 ssh -p "$INPUT_PORT" "${extra_params[@]}" "$remote" 'bash -s' <<< "$REMOTE_CODE"
