@@ -5,6 +5,7 @@ set -ev
 BLUE_PORT="$INPUT_BLUE_PORT"
 GREEN_PORT="$INPUT_GREEN_PORT"
 NAME="$INPUT_NAME"
+STRIP_COMPONENTS="$INPUT_STRIP_COMPONENTS"
 
 BASE_DIR="/apps/$NAME"
 NGINX_CONFIG="/etc/nginx/sites-available/$NAME"
@@ -25,7 +26,7 @@ TARGET_DIR="$BASE_DIR/$TARGET"
 TARGET_CONFIG="$TARGET_DIR/ecosystem.config.js"
 
 rm -rf "${TARGET_DIR:?}/"* "${TARGET_DIR:?}/".*
-tar --overwrite --strip-components=2 -xzf "$NAME.tgz" -C "$TARGET_DIR"
+tar --overwrite "--strip-components=$STRIP_COMPONENTS" -xzf "$NAME.tgz" -C "$TARGET_DIR"
 sed -i -e "s/\$TARGET_PORT/$TARGET_PORT/" -e "s/\$TARGET/$TARGET/" "$TARGET_CONFIG"
 
 pm2 start "$TARGET_CONFIG" --env production

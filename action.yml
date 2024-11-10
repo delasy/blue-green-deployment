@@ -31,6 +31,10 @@ inputs:
     description: NGINX green port, eg. 3001
     default: 3001
     required: true
+  strip-components:
+    description: Remove specified number of leading path elements when unpacking tar file
+    default: 1
+    required: true
 
 runs:
   using: composite
@@ -47,6 +51,7 @@ runs:
         INPUT_SOURCE: ${{ inputs.source }}
         INPUT_BLUE_PORT: ${{ inputs.blue-port }}
         INPUT_GREEN_PORT: ${{ inputs.green-port }}
+        INPUT_STRIP_COMPONENTS: ${{ inputs.strip-components }}
 
 branding:
   icon: cloud
